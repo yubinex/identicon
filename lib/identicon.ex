@@ -7,13 +7,14 @@ defmodule Identicon do
   end
 
   def build_grid(%Identicon.Image{hex: hex} = image) do
-    # Splits the enumerable (hex) into chunks of size 3.
-    # The second argument (3) specifies the chunk size.
-    # The third argument (:discard) indicates that any remaining elements
-    # that don't form a complete chunk of 3 should be discarded.
-    hex
-    |> Enum.chunk_every(3, 3, :discard)
-    |> Enum.map(&mirror_row/1)
+    grid =
+      hex
+      |> Enum.chunk_every(3, 3, :discard)
+      |> Enum.map(&mirror_row/1)
+      |> List.flatten()
+      |> Enum.with_index()
+
+    %Identicon.Image{image | grid: grid}
   end
 
   def mirror_row(row) do
